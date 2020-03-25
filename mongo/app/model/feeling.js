@@ -1,0 +1,12 @@
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const catSchema = new Schema({
+  name: String,
+  age: Number,
+  species: String,
+  owner: { type: mongoose.ObjectId, ref: 'User' }
+});
+  
+module.exports = mongoose.model('Cat', catSchema);
