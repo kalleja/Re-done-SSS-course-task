@@ -1,23 +1,23 @@
 "use strict";
 const express = require('express');
-const userRouter = express.Router();
+const peopleRouter = express.Router();
 
 const userController = require('../controllers/userController');
 
-userRouter.get('/', userController.user_list_get);
+peopleRouter.get('/', userController.user_list_get);
 
-userRouter.get('/:id', userController.user_get);
+peopleRouter.get('/:id', userController.user_get);
 
-userRouter.post('/', (req, res) => {
+peopleRouter.post('/', (req, res) => {
     console.log(req.body);
     res.send('With this endpoint you can add users');
 });
 
-userRouter.put('/', (req, res) => {
+peopleRouter.put('/', (req, res) => {
     res.send('With this endpoint you can edit users');
 });
 
-userRouter.delete('/', (req, res) => {
+peopleRouter.delete('/', (req, res) => {
     res.send('With this endpoint you can delete users');
 });
 
