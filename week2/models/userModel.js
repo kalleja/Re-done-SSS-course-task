@@ -2,9 +2,9 @@
 const users = [
   {
     id: '1',
-    name: 'John Doe',
-    email: 'john@metropolia.fi',
-    password: '1234',
+    name: 'President Screw',
+    email: 'heilScrew@dumbpolia.fi',
+    password: 'SpaceBalls',
   },
   {
     id: '2',
