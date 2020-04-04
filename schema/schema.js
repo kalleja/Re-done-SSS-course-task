@@ -1,6 +1,6 @@
 // schema/schema.js
 "use strict";
-const _ = require("lodash");
+
 const {
     GraphQLObjectType, GraphQLID,
     GraphQLString, GraphQLList,
@@ -9,37 +9,35 @@ const {
     GraphQLFloat, GraphQLInputObjectType,
 } = require("graphql");
 
-const connection = require('./models/connection');
-const connectionType = require('./models/connectionType');
-const level = require('./models/level');
-const station = require('./models/station');
-const currentType = require('./models/currentType');
+const STATION = require("../models/station");
+const CONNEC = require("../models/connection");
+const CONTYPE = require("../models/connectionType");
+const CURTYP = require("../models/currentType");
+const LEVELS = require("../models/level");
 
-
-
-const gql_connectionType = new GraphQLObjectType({
-    name: "connectionType",
-    description: "Type of connection",
+const gql_CONTYPE = new GraphQLObjectType({
+    name: "CONNECTIONTYPE",
+    description: "TYPE OF LINK",
     fields: () => ({
         id: { type: GraphQLID },
-        FormalName: { type: GraphQLString },
+        FormalName: { type: GraphQLString }, 
         Title: { type: GraphQLString }
     })
 });
 
-const gql_currentType = new GraphQLObjectType({
-    name: "currentType",
-    description: "Current type",
+const gql_CURTYP = new GraphQLObjectType({
+    name: "CURRENTTYPE",
+    description: "CURRENT YPE",
     fields: () => ({
         id: { type: GraphQLID },
-        Description: { type: GraphQLString },
+        Description: { type: GraphQLString }, 
         Title: { type: GraphQLString }
     })
 });
 
-const gql_level = new GraphQLObjectType({
-    name: "level",
-    description: "Level",
+const gql_LEVELS = new GraphQLObjectType({
+    name: "LEVEL",
+    description: "LEVEL",
     fields: () => ({
         id: { type: GraphQLID },
         Comments: { type: GraphQLString },
@@ -48,16 +46,16 @@ const gql_level = new GraphQLObjectType({
     })
 });
 
-const gql_connection = new GraphQLObjectType({
-    name: "connection",
-    description: "Connection",
+const gql_CONNEC = new GraphQLObjectType({
+    name: "CONNECTION",
+    description: "CONNECTION",
     fields: () => ({
         id: { type: GraphQLID },
         ConnectionType: {
-            type: gql_connectionType,
+            type: gql_CONTYPE,
             resolve: async (parent, args) => {
                 try {
-                    return await connectionType.findById(
+                    return await CONTYPE.findById(
                         parent.ConnectionTypeID
                     );
                 } catch (error) {
@@ -66,20 +64,20 @@ const gql_connection = new GraphQLObjectType({
             }
         },
         LevelType: {
-            type: gql_level,
+            type: gql_LEVELS,
             resolve: async (parent, args) => {
                 try {
-                    return await level.findById(parent.LevelID);
+                    return await LEVELS.findById(parent.LevelID);
                 } catch (error) {
                     return new Error(error);
                 }
             }
         },
         CurrentType: {
-            type: gql_currentType,
+            type: gql_CURTYP,
             resolve: async (parent, args) => {
                 try {
-                    return await currentType.findById(parent.CurrentTypeID);
+                    return await CURTYP.findById(parent.CurrenTypeID);
                 } catch (error) {
                     return new Error(error);
                 }
@@ -99,17 +97,17 @@ const gql_geoJSON = new GraphQLObjectType({
     })
 });
 
-const gql_station = new GraphQLObjectType({
-    name: "station",
-    description: "Station",
+const gql_STATION = new GraphQLObjectType({
+    name: "STATION",
+    description: "STATION",
     fields: () => ({
         id: { type: GraphQLID },
         Location: { type: gql_geoJSON },
         Connections: {
-            type: new GraphQLList(gql_connection),
+            type: new GraphQLList(gql_CONNEC),
             resolve: async (parent, args) => {
                 try {
-                    return await connection.find({ _id: parent.Connections });
+                    return await CONNEC.find({ _id: parent.Connections });
                 } catch (error) {
                     return new Error(error);
                 }
@@ -134,15 +132,15 @@ const gql_coords = new GraphQLInputObjectType({
 
 const gql_bounds = new GraphQLInputObjectType({
     name: "bounds",
-    description: "Query bounds for geometrical spatial query",
+    description: "Query bounds for coordinates",
     fields: () => ({
         _southWest: { type: gql_coords },
         _northEast: { type: gql_coords }
     })
 });
 
-const gql_connectioninput = new GraphQLInputObjectType({
-    name: "Here are the connectioninput",
+const gql_CONNECinput = new GraphQLInputObjectType({
+    name: "connectioninput",
     fields: () => ({
         ConnectionTypeID: { type: GraphQLID },
         CurrentTypeID: { type: GraphQLID },
@@ -152,7 +150,7 @@ const gql_connectioninput = new GraphQLInputObjectType({
 });
 
 const gql_locationinput = new GraphQLInputObjectType({
-    name: "The Locationinput",
+    name: "locationinput",
     fields: () => ({
         type: { type: GraphQLString, defaultValue: "Point" },
         coordinates: {
@@ -164,13 +162,13 @@ const gql_locationinput = new GraphQLInputObjectType({
 const RootQuery = new GraphQLObjectType({
     name: "RootQueryType",
     fields: {
-        stations: {
-            type: new GraphQLList(gql_station),
-            description: "Gets list of stations based on parameters",
-            args: {
-                start: { type: GraphQLInt, defaultValue: 0 },
-                limit: { type: GraphQLInt, defaultValue: 10 },
-                bounds: { type: gql_bounds, defaultValue: null }
+    stations: {
+        type: new GraphQLList(gql_STATION),
+        description: "Gets list of stations based on thier parameters",
+        args: {
+        start: { type: GraphQLInt, defaultValue: 0 },
+        limit: { type: GraphQLInt, defaultValue: 10 },
+        bounds: { type: gql_bounds, defaultValue: null }
             },
             resolve: async (parent, args) => {
                 try {
@@ -190,7 +188,7 @@ const RootQuery = new GraphQLObjectType({
                             ]
                         };
 
-                        return await station
+                        return await STATION
                             .find({
                                 Location: {
                                     $geoWithin: {
@@ -201,7 +199,7 @@ const RootQuery = new GraphQLObjectType({
                             .skip(args.start)
                             .limit(args.limit);
                     } else {
-                        return await station
+                        return await STATION
                             .find({})
                             .skip(args.start)
                             .limit(args.limit);
@@ -212,45 +210,58 @@ const RootQuery = new GraphQLObjectType({
             }
         },
         station: {
-            type: gql_station,
-            description: "Get the stations by id",
+            type: gql_STATION,
+            description: "Get the one single Stations by id",
             args: { id: { type: new GraphQLNonNull(GraphQLID) } },
             resolve: async (parent, args) => {
                 try {
-                    return await station.findById(args.id);
+                    return await STATION.findById(args.id);
+                } catch (error) {
+                    return new Error(error);
+                }
+            }
+        },
+
+        Stations: {
+            type: gql_STATION,
+            description: "Get the Stations bounds by id",
+            args: { ID: { type: new GraphQLNonNull(GraphQLID) } },
+            resolve: async (parent, args) => {
+                try {
+                    return await STATION.findById(args.id);
                 } catch (error) {
                     return new Error(error);
                 }
             }
         },
         connectiontypes: {
-            type: new GraphQLList(gql_connectionType),
-            description: "Gets every connection types",
+            type: new GraphQLList(gql_CONTYPE),
+            description: "Gets every connectiontypes",
             resolve: async (parent, args) => {
                 try {
-                    return await connectionType.find();
+                    return await CONTYPE.find();
                 } catch (error) {
                     return new Error(error);
                 }
             }
         },
         currenttypes: {
-            type: new GraphQLList(gql_currentType),
+            type: new GraphQLList(gql_CURTYP),
             description: "Gets every current types",
             resolve: async (parent, args) => {
                 try {
-                    return await currentType.find();
+                    return await CURTYP.find();
                 } catch (error) {
                     return new Error(error);
                 }
             }
         },
         leveltypes: {
-            type: new GraphQLList(gql_level),
+            type: new GraphQLList(gql_LEVELS),
             description: "Gets all level types",
             resolve: async (parten, args) => {
                 try {
-                    return await level.find();
+                    return await LEVELS.find();
                 } catch (error) {
                     return new Error(error);
                 }
@@ -264,17 +275,12 @@ const Mutation = new GraphQLObjectType({
     description: "Mutations...",
     fields: {
         addStation: {
-            type: gql_station,
+            type: gql_STATION,
             description: "Add a new station",
             args: {
                 Connections: {
-                    type: new GraphQLNonNull(
-                        new GraphQLList(gql_connectioninput)
-                    )
-                },
-                Location: {
-                    type: new GraphQLNonNull(gql_locationinput)
-                },
+                    type: new GraphQLNonNull(new GraphQLList(gql_CONNECinput))},
+                Location: { type: new GraphQLNonNull(gql_locationinput) },
                 Title: { type: new GraphQLNonNull(GraphQLString) },
                 AddressLine1: { type: new GraphQLNonNull(GraphQLString) },
                 Town: { type: new GraphQLNonNull(GraphQLString) },
@@ -284,27 +290,27 @@ const Mutation = new GraphQLObjectType({
             resolve: async (parent, args, { req, res, checkAuth }) => {
                 try {
                     checkAuth(req, res);
-                    var connections = [];
-                    await args.Connections.map(conn => {
-                        const newConnection = new connection(conn);
-                        newConnection.save();
-                        connections.push(newConnection);
+                    var CONNECs = [];
+                    await args.CONNECs.map(conn => {
+                        const newCONNEC = new CONNEC(conn);
+                        newCONNEC.save();
+                        CONNECs.push(newCONNEC);
                     });
-                    args.Connections = connections;
-                    const newStation = new station(args);
-                    return await newStation.save();
+                    args.CONNECs = CONNECs;
+                    const newSTATION = new STATION(args);
+                    return await newSTATION.save();
                 } catch (error) {
                     return new Error(error);
                 }
             }
         },
         modifyStation: {
-            type: gql_station,
+            type: gql_STATION,
             description: "Modify an existing station",
             args: {
                 id: { type: new GraphQLNonNull(GraphQLID) },
-                Connections: {
-                    type: new GraphQLList(gql_connectioninput)
+                CONNECs: {
+                    type: new GraphQLList(gql_CONNECinput)
                 },
                 Location: {
                     type: gql_locationinput
@@ -319,21 +325,21 @@ const Mutation = new GraphQLObjectType({
                 try {
                     checkAuth(req, res);
 
-                    const oldStation = await station.findById(args.id);
-                    await oldStation.Connections.map(async connectionID => {
-                        await connection.findByIdAndDelete(connectionID);
+                    const oldStation = await STATION.findById(args.id);
+                    await oldStation.Connections.map(async connectionID  => {
+                        await CONNEC.findByIdAndDelete(connectionID );
                     });
 
-                    var updatedConnections = await Promise.all(
-                        args.Connections.map(async conn => {
-                            const c = new connection(conn);
+                    var updatedCONNECs = await Promise.all(
+                        args.CONNECs.map(async conn => {
+                            const c = new CONNEC(conn);
                             await c.save();
                             return c._id;
                         })
                     );
-                    args.Connections = updatedConnections;
+                    args.CONNECs = updatedCONNECs;
 
-                    const updatedStation = await station.findByIdAndUpdate(
+                    const updatedSTATION = await STATION.findByIdAndUpdate(
                         { _id: args.id },
                         args,
                         { new: true },
@@ -344,24 +350,24 @@ const Mutation = new GraphQLObjectType({
                             }
                         }
                     );
-                    return updatedStation;
+                    return updatedSTATION;
                 } catch (error) {
                     return new Error(error);
                 }
             }
         },
         deleteStation: {
-            type: gql_station,
+            type: gql_STATION,
             description: "Delete a station",
             args: { id: { type: new GraphQLNonNull(GraphQLID) } },
             resolve: async (parent, args, { req, res, checkAuth }) => {
                 try {
                     checkAuth(req, res);
-                    const delStation = await station.findByIdAndDelete(args.id);
-                    await delStation.Connections.map(conn => {
-                        connection.findByIdAndDelete(conn);
+                    const delSTATION = await STATION.findByIdAndDelete(args.id);
+                    await delSTATION.CONNECs.map(conn => {
+                        CONNEC.findByIdAndDelete(conn);
                     });
-                    return delStation;
+                    return delSTATION;
                 } catch (error) {
                     return new Error(error);
                 }
