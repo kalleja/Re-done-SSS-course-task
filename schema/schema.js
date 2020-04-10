@@ -296,7 +296,7 @@ const Mutation = new GraphQLObjectType({
             resolve: async (parent, args, { req, res, checkAuth }) => {
                 try {
                     checkAuth(req, res);
-                    var CONNECs = [];
+                    var connections = [];
                     await args.CONNECs.map(conn => {
                         const newCONNEC = new CONNEC(conn);
                         newCONNEC.save();
