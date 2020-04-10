@@ -300,7 +300,7 @@ const Mutation = new GraphQLObjectType({
                     await args.CONNECs.map(conn => {
                         const newCONNEC = new CONNEC(conn);
                         newCONNEC.save();
-                        CONNECs.push(newCONNEC);
+                        connections.push(newCONNEC);
                     });
                     args.CONNECs = CONNECs;
                     const newSTATION = new STATION(args);
