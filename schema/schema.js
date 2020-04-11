@@ -7,7 +7,6 @@ const {
     GraphQLSchema, GraphQLNonNull,
     GraphQLBoolean,GraphQLInt,
     GraphQLFloat, GraphQLInputObjectType,
-    GraphQLNoNull
 } = require("graphql");
 
 const STATION = require("../models/station");
@@ -23,7 +22,8 @@ const gql_CONTYPE = new GraphQLObjectType({
         id: { type: GraphQLID },
         FormalName: { type: GraphQLString }, 
         Title: { type: GraphQLString }
-    }) });
+    })
+});
 
 const gql_CURTYP = new GraphQLObjectType({
     name: "CURRENTTYPE",
@@ -31,7 +31,8 @@ const gql_CURTYP = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         Description: { type: GraphQLString }, 
-        Title: { type: GraphQLString } })
+        Title: { type: GraphQLString }
+    })
 });
 
 const gql_LEVELS = new GraphQLObjectType({
@@ -41,7 +42,9 @@ const gql_LEVELS = new GraphQLObjectType({
         id: { type: GraphQLID },
         Comments: { type: GraphQLString },
         IsFastChargeCapable: { type: GraphQLBoolean },
-        Title: { type: GraphQLString }  }) });
+        Title: { type: GraphQLString }
+    })
+});
 
 const gql_CONNEC = new GraphQLObjectType({
     name: "CONNECTION",
@@ -130,15 +133,6 @@ const gql_coords = new GraphQLInputObjectType({
 const gql_bounds = new GraphQLInputObjectType({
     name: "bounds",
     description: "Query bounds for coordinates",
-    fields: () => ({
-        _southWest: { type: gql_coords },
-        _northEast: { type: gql_coords }
-    })
-});
-
-const gql_bounds = new GraphQLInputObjectType({
-    name: "bounds",
-    description: "Query bounds for geo spatial query",
     fields: () => ({
         _southWest: { type: gql_coords },
         _northEast: { type: gql_coords }
@@ -296,11 +290,11 @@ const Mutation = new GraphQLObjectType({
             resolve: async (parent, args, { req, res, checkAuth }) => {
                 try {
                     checkAuth(req, res);
-                    var connections = [];
+                    var CONNECs = [];
                     await args.CONNECs.map(conn => {
                         const newCONNEC = new CONNEC(conn);
                         newCONNEC.save();
-                        connections.push(newCONNEC);
+                        CONNECs.push(newCONNEC);
                     });
                     args.CONNECs = CONNECs;
                     const newSTATION = new STATION(args);
