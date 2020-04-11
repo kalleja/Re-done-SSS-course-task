@@ -1,2 +1,5 @@
-# SSS-course-week_asiggment
-Some of sss-corese task re done and organized
+## .env
+Create .env and add 
+``` 
+DB_URL=mongodb://<USER>:<PASSWORD>@<URL>:<PORT>/<DB_NAME>
+``` 

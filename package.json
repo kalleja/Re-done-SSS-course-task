@@ -1,0 +1,31 @@
+{
+  "name": "chargemap-rest",
+  "version": "1.0.0",
+  "description": "Create .env and add  ```  DB_URL=mongodb://<USER>:<PASSWORD>@<URL>:<PORT>/<DB_NAME> ```",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "bounds": "^2.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "fs": "0.0.1-security",
+    "graphql": "^15.0.0",
+    "helmet": "^3.22.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.7",
+    "openssl": "^1.1.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "ssl": "^1.0.0"
+  },
+  "devDependencies": {}
+}
