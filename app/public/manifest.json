@@ -1,0 +1,15 @@
+{
+    "short_name": "App",
+    "name": "Online Exam APP",
+    "icons": [
+        {
+            "src": "university-background.png",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image"
+        }
+    ],
+    "start_url": "./index.html",
+    "display": "standalone",
+    "theme_color": "#FFC300",
+    "background_color": "#EE4420"
+}
